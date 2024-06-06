@@ -40,7 +40,7 @@ export default function LessonPlans() {
     useEffect(() => {
         // Instead of fetching from an API, we use demo data
         setLessonPlans(demoLessonPlans);
-    }, [demoLessonPlans]);
+    }, []);
 
     return (
         <div className="container mx-auto p-4">
