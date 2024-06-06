@@ -32,5 +32,15 @@ export async function POST(req: NextRequest) {
     { expiresIn: '1h' }
   );
 
-  return NextResponse.json({ token }, { status: 200 });
+  const response = NextResponse.json({ message: 'Login successful' }, { status: 200 });
+
+  // Set the token in a cookie
+  response.cookies.set('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 3600,
+    path: '/',
+  });
+
+  return response;
 }
