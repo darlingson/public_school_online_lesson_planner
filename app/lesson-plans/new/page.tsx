@@ -1,124 +1,123 @@
-'use client';
-import { useState } from 'react';
+'use client'
 
-interface LessonPlan {
-    topic: string;
-    date: string;
-    objectives: string;
-    materials: string;
-    activities: string;
-    timing: string;
-  }
-export default function NewLessonPlan() {
-    const [lessonPlan, setLessonPlan] = useState<LessonPlan>({
-        topic: '',
-        date: '',
-        objectives: '',
-        materials: '',
-        activities: '',
-        timing: '',
+import { useState, ChangeEvent, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+
+interface LessonPlanFormData {
+  topic: string;
+  date: string;
+  objectives: string[];
+  materials: string[];
+  activities: string[];
+  timing: string;
+  email: string;
+}
+
+interface LessonPlanFormProps {}
+
+export default function LessonPlanForm(props: LessonPlanFormProps) {
+  const router = useRouter();
+  const [formData, setFormData] = useState<LessonPlanFormData>({
+    topic: '',
+    date: '',
+    objectives: [''],
+    materials: [''],
+    activities: [''],
+    timing: '',
+    email: '',
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number | null, field: string) => {
+    const newFormData = { ...formData };
+    if (field === 'objectives' || field === 'materials' || field === 'activities') {
+      if (index !== null) {
+        (newFormData[field] as string[])[index] = e.target.value;
+      }
+    } else {
+      if (field in newFormData) {
+        newFormData[field] = e.target.value;
+      }
+    }
+    setFormData(newFormData);
+  };
+
+  const handleAddInput = (field: string) => {
+    const newFormData = { ...formData };
+    newFormData[field].push('');
+    setFormData(newFormData);
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/lessonplans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-    
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setLessonPlan({ ...lessonPlan, [e.target.name]: e.target.value });
-      };
-    
-      const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Submitting:', lessonPlan);
-        // Here you would typically send the data to your backend via an API call
-      };
-    
-      return (
-        <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <h2 className="text-lg font-semibold mb-4">Create New Lesson Plan</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="topic" className="block text-sm font-medium text-gray-700">Topic</label>
-              <input
-                type="text"
-                name="topic"
-                id="topic"
-                value={lessonPlan.topic}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                placeholder="Enter the topic of the lesson"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date</label>
-              <input
-                type="date"
-                name="date"
-                id="date"
-                value={lessonPlan.date}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="objectives" className="block text-sm font-medium text-gray-700">Objectives</label>
-              <textarea
-                name="objectives"
-                id="objectives"
-                value={lessonPlan.objectives}
-                onChange={handleChange}
-                rows={3}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                placeholder="What are the objectives of this lesson?"
-                required
-              ></textarea>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="materials" className="block text-sm font-medium text-gray-700">Materials</label>
-              <textarea
-                name="materials"
-                id="materials"
-                value={lessonPlan.materials}
-                onChange={handleChange}
-                rows={2}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                placeholder="List all materials needed"
-                required
-              ></textarea>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="activities" className="block text-sm font-medium text-gray-700">Activities</label>
-              <textarea
-                name="activities"
-                id="activities"
-                value={lessonPlan.activities}
-                onChange={handleChange}
-                rows={3}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                placeholder="Describe the activities planned"
-                required
-              ></textarea>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="timing" className="block text-sm font-medium text-gray-700">Timing</label>
-              <input
-                type="text"
-                name="timing"
-                id="timing"
-                value={lessonPlan.timing}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-                placeholder="Total duration of the lesson (e.g., 50 minutes)"
-                required
-              />
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </div>
-      );
+      if (response.ok) {
+        console.log('Lesson Plan created successfully');
+        router.push('/success');
+        setFormData({
+          topic: '',
+          date: '',
+          objectives: [''],
+          materials: [''],
+          activities: [''],
+          timing: '',
+          email: '',
+        });
+      } else {
+        console.error('Failed to create Lesson Plan');
+        // Handle error
+      }
+    } catch (error) {
+      console.error('Error creating Lesson Plan:', error);
+      // Handle error
+    }
+  };
+
+  return (
+<form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 pt-6 pb-8 bg-white rounded shadow-md">
+  <label htmlFor="topic" className="block text-sm font-medium text-gray-700">Topic:</label>
+  <input type="text" id="topic" name="topic" value={formData.topic} onChange={(e) => handleChange(e, null, 'topic')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
+  
+  <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date:</label>
+  <input type="text" id="date" name="date" value={formData.date} onChange={(e) => handleChange(e, null, 'date')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
+  
+  <label className="block text-sm font-medium text-gray-700">Objectives:</label>
+  {formData.objectives.map((objective, index) => (
+    <div key={index} className="flex mb-2">
+      <input type="text" value={objective} onChange={(e) => handleChange(e, index, 'objectives')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" />
+    </div>
+  ))}
+  <button type="button" onClick={() => handleAddInput('objectives')} className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Add Objective</button><br /><br />
+  
+  <label className="block text-sm font-medium text-gray-700">Materials:</label>
+  {formData.materials.map((material, index) => (
+    <div key={index} className="flex mb-2">
+      <input type="text" value={material} onChange={(e) => handleChange(e, index, 'materials')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" />
+    </div>
+  ))}
+  <button type="button" onClick={() => handleAddInput('materials')} className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Add Material</button><br /><br />
+  
+  <label className="block text-sm font-medium text-gray-700">Activities:</label>
+  {formData.activities.map((activity, index) => (
+    <div key={index} className="flex mb-2">
+      <input type="text" value={activity} onChange={(e) => handleChange(e, index, 'activities')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" />
+    </div>
+  ))}
+  <button type="button" onClick={() => handleAddInput('activities')} className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">Add Activity</button><br /><br />
+  
+  <label htmlFor="timing" className="block text-sm font-medium text-gray-700">Timing:</label>
+  <input type="text" id="timing" name="timing" value={formData.timing} onChange={(e) => handleChange(e, null, 'timing')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
+  
+  <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email:</label>
+  <input type="email" id="email" name="email" value={formData.email} onChange={(e) => handleChange(e, null, 'email')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
+  
+  <input type="submit" value="Submit" className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" />
+</form>
+  );
 }
