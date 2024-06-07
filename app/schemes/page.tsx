@@ -1,6 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+
+interface WeekTopic {
+  week: number;
+  topic: string;
+  objectives: string;
+  resources: string;
+  assessment: string;
+}
 
 interface Scheme {
   id: string;
@@ -8,132 +16,228 @@ interface Scheme {
   description: string;
   startDate: string;
   endDate: string;
+  weekTopics: WeekTopic[];
 }
 
 export default function Schemes() {
   const [schemes, setSchemes] = useState<Scheme[]>([]);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [newScheme, setNewScheme] = useState<Scheme>({
+    id: '',
+    title: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    weekTopics: [],
+  });
 
   useEffect(() => {
     fetchSchemes();
   }, []);
 
   const fetchSchemes = async () => {
-    const response = await fetch('/api/schemes');
-    const data = await response.json();
-    setSchemes(data);
+    try {
+      const response = await fetch('/api/schemes');
+      if (response.ok) {
+        const data = await response.json();
+        setSchemes(data);
+      } else {
+        console.error('Failed to fetch schemes:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Failed to fetch schemes:', error);
+    }
   };
 
-  const handleAddScheme = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newScheme = {
-      title,
-      description,
-      startDate,
-      endDate
-    };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewScheme((prevScheme) => ({
+      ...prevScheme,
+      [name]: value,
+    }));
+  };
 
-    const response = await fetch('/api/schemes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newScheme),
+  const handleAddWeekTopic = () => {
+    setNewScheme((prevScheme) => ({
+      ...prevScheme,
+      weekTopics: [
+        ...prevScheme.weekTopics,
+        { week: prevScheme.weekTopics.length + 1, topic: '', objectives: '', resources: '', assessment: '' },
+      ],
+    }));
+  };
+
+  const handleRemoveWeekTopic = (index: number) => {
+    setNewScheme((prevScheme) => ({
+      ...prevScheme,
+      weekTopics: prevScheme.weekTopics.filter((_, idx) => idx !== index),
+    }));
+  };
+
+  const handleWeekTopicChange = (index: number, field: string, value: string) => {
+    setNewScheme((prevScheme) => {
+      const newWeekTopics = [...prevScheme.weekTopics];
+      newWeekTopics[index] = {
+        ...newWeekTopics[index],
+        [field]: value,
+      };
+      return {
+        ...prevScheme,
+        weekTopics: newWeekTopics,
+      };
     });
+  };
 
-    if (response.ok) {
-      fetchSchemes();
-      setTitle('');
-      setDescription('');
-      setStartDate('');
-      setEndDate('');
-    } else {
-      console.error('Failed to add scheme');
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/schemes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newScheme),
+      });
+      if (response.ok) {
+        fetchSchemes();
+        setNewScheme({
+          id: '',
+          title: '',
+          description: '',
+          startDate: '',
+          endDate: '',
+          weekTopics: [],
+        });
+      } else {
+        console.error('Failed to add scheme:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Failed to add scheme:', error);
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex">
-        {/* List of schemes */}
-        <div className="w-2/3 pr-4">
-          <h1 className="text-xl font-bold mb-4">Schemes</h1>
-          {schemes.length > 0 ? (
-            schemes.map((scheme) => (
-              <div key={scheme.id} className="p-4 shadow rounded-lg mb-4">
-                <h2 className="text-lg font-semibold">{scheme.title}</h2>
+      <h1 className="text-2xl font-bold mb-4">Schemes</h1>
+      <div className="grid grid-cols-2 gap-8">
+        <div>
+          <h2 className="text-lg font-bold mb-2">Existing Schemes</h2>
+          <ul>
+            {schemes.map((scheme) => (
+              <li key={scheme.id} className="mb-4">
+                <h3 className="text-lg font-semibold">{scheme.title}</h3>
                 <p>{scheme.description}</p>
-                <p>
-                  {scheme.startDate} to {scheme.endDate}
-                </p>
-              </div>
-            ))
-          ) : (
-            <p>No schemes available. Please add one.</p>
-          )}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Form to add new scheme */}
-        <div className="w-1/3 pl-4">
-          <h2 className="text-lg font-bold mb-4">Add New Scheme</h2>
-          <form onSubmit={handleAddScheme} className="space-y-4">
-            <div>
-              <label htmlFor="title" className="block font-medium mb-1">
-                Title
-              </label>
+        <div>
+          <h2 className="text-lg font-bold mb-2">Add New Scheme</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="title" className="block font-medium mb-1">Title</label>
               <input
-                id="title"
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                id="title"
+                name="title"
+                value={newScheme.title}
+                onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required
               />
             </div>
-            <div>
-              <label htmlFor="description" className="block font-medium mb-1">
-                Description
-              </label>
+            <div className="mb-4">
+              <label htmlFor="description" className="block font-medium mb-1">Description</label>
               <textarea
                 id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                name="description"
+                value={newScheme.description}
+                onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required
-              />
+              ></textarea>
             </div>
-            <div>
-              <label htmlFor="startDate" className="block font-medium mb-1">
-                Start Date
-              </label>
+            <div className="mb-4">
+              <label htmlFor="startDate" className="block font-medium mb-1">Start Date</label>
               <input
+                type="date"
                 id="startDate"
+                name="startDate"
+                value={newScheme.startDate}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="endDate" className="block font-medium mb-1">End Date</label>
+              <input
                 type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                id="endDate"
+                name="endDate"
+                value={newScheme.endDate}
+                onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required
               />
             </div>
             <div>
-              <label htmlFor="endDate" className="block font-medium mb-1">
-                End Date
-              </label>
-              <input
-                id="endDate"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
-                required
-              />
+              <h3 className="text-lg font-bold mb-2">Week Topics</h3>
+              {newScheme.weekTopics.map((weekTopic, index) => (
+                <div key={index} className="mb-4">
+                  <label className="block font-medium mb-1">Week {weekTopic.week}</label>
+                  <input
+                    type="text"
+                    placeholder={`Week ${weekTopic.week} Topic`}
+                    value={weekTopic.topic}
+                    onChange={(e) => handleWeekTopicChange(index, 'topic', e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-2"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Objectives"
+                    value={weekTopic.objectives}
+                    onChange={(e) => handleWeekTopicChange(index, 'objectives', e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-2"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Resources"
+                    value={weekTopic.resources}
+                    onChange={(e) => handleWeekTopicChange(index, 'resources', e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-2"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Assessment"
+                    value={weekTopic.assessment}
+                    onChange={(e) => handleWeekTopicChange(index, 'assessment', e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-2"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveWeekTopic(index)}
+                    className="text-red-500 hover:text-red-700 font-medium"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={handleAddWeekTopic}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Add Week Topic
+              </button>
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
             >
               Add Scheme
             </button>
