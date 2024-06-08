@@ -27,7 +27,7 @@ export default function LessonPlanForm(props: LessonPlanFormProps) {
     email: '',
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number | null, field: string) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number | null, field: keyof LessonPlanFormData) => {
     const newFormData = { ...formData };
     if (field === 'objectives' || field === 'materials' || field === 'activities') {
       if (index !== null) {
@@ -41,9 +41,11 @@ export default function LessonPlanForm(props: LessonPlanFormProps) {
     setFormData(newFormData);
   };
 
-  const handleAddInput = (field: string) => {
+  const handleAddInput = (field: keyof LessonPlanFormData) => {
     const newFormData = { ...formData };
-    newFormData[field].push('');
+    if (field === 'objectives' || field === 'materials' || field === 'activities') {
+    newFormData[field].push(''); 
+    }
     setFormData(newFormData);
   };
 
