@@ -56,6 +56,7 @@ export default function LessonPlanForm(props: LessonPlanFormProps) {
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    console.log(formData.email);
     e.preventDefault();
     try {
       const response = await fetch('/api/lessonplans', {
@@ -81,7 +82,8 @@ export default function LessonPlanForm(props: LessonPlanFormProps) {
           email: '',
         });
       } else {
-        console.error('Failed to create Lesson Plan');
+        // console.error(response.statusText);
+        console.log(response.json());
         // Handle error
       }
     } catch (error) {
