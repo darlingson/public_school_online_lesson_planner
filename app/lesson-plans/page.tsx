@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import Navbar from '../(components)/Navbar';
 
 // Define an interface for the lesson plan
 interface LessonPlan {
@@ -43,6 +44,8 @@ export default function LessonPlans() {
     }, []);
 
     return (
+        <>
+        <Navbar />
         <div className="container mx-auto p-4">
             <h1 className="text-xl font-bold mb-4">Lesson Plans</h1>
             <div className="mb-4">
@@ -67,5 +70,6 @@ export default function LessonPlans() {
                 )}
             </div>
         </div>
+        </>
     );
 }
