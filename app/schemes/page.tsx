@@ -13,6 +13,10 @@ interface WeekTopic {
 interface Scheme {
   id: string;
   title: string;
+  email: string;
+  subject: string;
+  class_name: string;
+  term: string;
   description: string;
   startDate: string;
   endDate: string;
@@ -24,6 +28,10 @@ export default function Schemes() {
   const [newScheme, setNewScheme] = useState<Scheme>({
     id: '',
     title: '',
+    email: '',
+    subject: '',
+    class_name: '',
+    term: '',
     description: '',
     startDate: '',
     endDate: '',
@@ -102,6 +110,10 @@ export default function Schemes() {
         setNewScheme({
           id: '',
           title: '',
+          email: '',
+          subject: '',
+          class_name: '',
+          term: '',
           description: '',
           startDate: '',
           endDate: '',
@@ -141,6 +153,54 @@ export default function Schemes() {
                 id="title"
                 name="title"
                 value={newScheme.title}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="email" className="block font-medium mb-1">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={newScheme.email}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="subject" className="block font-medium mb-1">Subject</label>
+              <input
+                type="text"
+                id="subject"
+                name="subject"
+                value={newScheme.subject}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="class_name" className="block font-medium mb-1">Class Name</label>
+              <input
+                type="text"
+                id="class_name"
+                name="class_name"
+                value={newScheme.class_name}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div className='mb-4'>
+              <label htmlFor="term" className="block font-medium mb-1">Term</label>
+              <input
+                type="text"
+                id="term"
+                name="term"
+                value={newScheme.term}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded"
                 required
