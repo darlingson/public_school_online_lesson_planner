@@ -17,11 +17,23 @@ export async function POST(request: NextRequest) {
     await dbconnect();
 
     try {
-        const { topic, date, objectives, materials, activities, timing, email } = await request.json();
-        const lessonPlan = new LessonPlan({ topic, date, objectives, materials, activities, timing, email });
+        const { topic, class_name, subject, term, date, objectives, materials, activities, timing, email } = await request.json();
+        const lessonPlan = new LessonPlan({
+            topic,
+            class_name,
+            subject,
+            term,
+            date,
+            objectives,
+            materials,
+            activities,
+            timing,
+            email
+        });
         await lessonPlan.save();
         return NextResponse.json({ message: 'Lesson Plan created successfully' }, { status: 201 });
     } catch (error) {
+        console.error('Error creating Lesson Plan:', error);
         return NextResponse.json({ message: 'Error creating Lesson Plan', error }, { status: 400 });
     }
 }

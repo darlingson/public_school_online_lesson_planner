@@ -2,6 +2,9 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 interface ILessonPlan extends Document {
   topic: string;
+  class_name: string;
+  subject: string;
+  term: string;
   date: string;
   objectives: string[];
   materials: string[];
@@ -12,6 +15,9 @@ interface ILessonPlan extends Document {
 
 const LessonPlanSchema: Schema = new Schema({
   topic: { type: String, required: true },
+  class_name: { type: String, required: true },
+  subject: { type: String, required: true },
+  term: { type: String, required: true },
   date: { type: String, required: true },
   objectives: { type: [String], required: true },
   materials: { type: [String], required: true },

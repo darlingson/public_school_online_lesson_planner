@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 
 interface LessonPlanFormData {
   topic: string;
+  class_name: string;
+  subject: string;
+  term: string;
   date: string;
   objectives: string[];
   materials: string[];
@@ -19,6 +22,9 @@ export default function LessonPlanForm(props: LessonPlanFormProps) {
   const router = useRouter();
   const [formData, setFormData] = useState<LessonPlanFormData>({
     topic: '',
+    class_name: '',
+    subject: '',
+    term: '',
     date: '',
     objectives: [''],
     materials: [''],
@@ -61,9 +67,12 @@ export default function LessonPlanForm(props: LessonPlanFormProps) {
       });
       if (response.ok) {
         console.log('Lesson Plan created successfully');
-        router.push('/success');
+        router.push('/lesson-plans');
         setFormData({
           topic: '',
+          class_name: '',
+          subject: '',
+          term: '',
           date: '',
           objectives: [''],
           materials: [''],
@@ -86,6 +95,15 @@ export default function LessonPlanForm(props: LessonPlanFormProps) {
   <label htmlFor="topic" className="block text-sm font-medium text-gray-700">Topic:</label>
   <input type="text" id="topic" name="topic" value={formData.topic} onChange={(e) => handleChange(e, null, 'topic')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
   
+  <label htmlFor="class" className="block text-sm font-medium text-gray-700">Class:</label>
+  <input type="text" id='class' name="class_name" value={formData.class_name} onChange={(e) => handleChange(e, null, 'class_name')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
+
+  <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Subject:</label>
+  <input type='text' id='subject' name="subject" value={formData.subject} onChange={(e) => handleChange(e, null, 'subject')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
+
+  <label htmlFor="term" className="block text-sm font-medium text-gray-700">Term:</label>
+  <input type="text" id="term" name="term" value={formData.term} onChange={(e) => handleChange(e, null, 'term')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
+
   <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date:</label>
   <input type="text" id="date" name="date" value={formData.date} onChange={(e) => handleChange(e, null, 'date')} className="w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded" /><br /><br />
   
