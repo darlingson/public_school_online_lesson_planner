@@ -1,3 +1,5 @@
+import Navbar from "../(components)/Navbar";
+
 export default function Settings() {
-    return <div>Settings</div>;
+    return<>     <Navbar/><div>Settings</div></>;
 }

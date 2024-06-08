@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Navbar from '../(components)/Navbar';
 
 interface WeekTopic {
   week: number;
@@ -128,6 +129,8 @@ export default function Schemes() {
   };
 
   return (
+    <>
+    <Navbar/>
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Schemes</h1>
       <div className="grid grid-cols-2 gap-8">
@@ -305,5 +308,6 @@ export default function Schemes() {
         </div>
       </div>
     </div>
+    </>
   );
 }

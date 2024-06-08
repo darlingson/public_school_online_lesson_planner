@@ -5,42 +5,48 @@ import Navbar from '../(components)/Navbar';
 
 // Define an interface for the lesson plan
 interface LessonPlan {
-    id: number;
-    date: string;
+    _id: string; // Assuming MongoDB ObjectId as string
     topic: string;
+    class_name: string;
+    subject: string;
+    term: string;
+    date: string;
     objectives: string;
     materials: string;
     activities: string;
     timing: string;
+    email: string;
 }
 
 export default function LessonPlans() {
-    const demoLessonPlans: LessonPlan[] = [
-        {
-            id: 1,
-            date: '2024-06-05',
-            topic: 'Introduction to Poetry',
-            objectives: 'Identify different types of poems and understand basic elements of poetry.',
-            materials: 'Textbook on Poetry, Whiteboard and markers',
-            activities: 'Lecture, Group Discussion, Individual Assignment',
-            timing: '50 minutes'
-        },
-        {
-            id: 2,
-            date: '2024-06-06',
-            topic: 'Analyzing Poems',
-            objectives: 'Analyze the themes and language used in selected poems.',
-            materials: 'Copies of selected poems, Worksheets for analysis',
-            activities: 'Warm-up, Individual Reading, Worksheet Activity',
-            timing: '50 minutes'
-        }
-    ];
-
     const [lessonPlans, setLessonPlans] = useState<LessonPlan[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // Instead of fetching from an API, we use demo data
-        setLessonPlans(demoLessonPlans);
+        async function fetchLessonPlans() {
+            try {
+                const response = await fetch('/api/lessonplans', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch lesson plans');
+                }
+
+                const data = await response.json();
+                setLessonPlans(data);
+                setIsLoading(false);
+            } catch (err: any) {
+                setError(err.message);
+                setIsLoading(false);
+            }
+        }
+
+        fetchLessonPlans();
     }, []);
 
     return (
@@ -50,20 +56,27 @@ export default function LessonPlans() {
             <h1 className="text-xl font-bold mb-4">Lesson Plans</h1>
             <div className="mb-4">
                 <Link href="/lesson-plans/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Create New Lesson Plan
+                    Create New Lesson Plan
                 </Link>
             </div>
             <div className="space-y-2">
-                {lessonPlans.length > 0 ? (
+                {isLoading ? (
+                    <p>Loading...</p>
+                ) : error ? (
+                    <p className="text-red-500">{error}</p>
+                ) : lessonPlans.length > 0 ? (
                     lessonPlans.map(plan => (
-                        <div key={plan.id} className="p-4 shadow rounded-lg">
+                        <Link key={plan._id} href={`/lesson-plans/${plan._id}`} className="block p-4 shadow rounded-lg hover:bg-gray-100">
                             <h2 className="text-lg font-semibold">{plan.topic}</h2>
                             <p>{plan.date}</p>
+                            <p className="text-gray-700">{plan.class_name}</p>
+                            <p className="text-gray-700">{plan.subject}</p>
+                            <p className="text-gray-700">{plan.term}</p>
                             <p className="text-gray-700">{plan.objectives}</p>
-                            <Link href={`/lesson-plans/${plan.id}`} className='text-blue-500 hover:text-blue-800"'>
-                                View/Edit
-                            </Link>
-                        </div>
+                            <p className="text-gray-700">{plan.materials}</p>
+                            <p className="text-gray-700">{plan.activities}</p>
+                            <p className="text-gray-700">{plan.timing}</p>
+                        </Link>
                     ))
                 ) : (
                     <p>No lesson plans available. Please create one.</p>

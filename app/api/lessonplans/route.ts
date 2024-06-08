@@ -45,8 +45,7 @@ import LessonPlan from '../../(models)/LessonPlan';
 
 export async function GET(req: NextRequest) {
     await dbconnect();
-
-    const userEmail = req.nextUrl.searchParams.get('userEmail');
+    const userEmail = req.headers.get('user-email');
     if (!userEmail) {
         return NextResponse.json({ message: 'Email not provided' }, { status: 400 });
     }
