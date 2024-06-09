@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const OnboardingPage = () => {
@@ -9,7 +10,11 @@ const OnboardingPage = () => {
   const [subjects, setSubjects] = useState<{ subjectName: string; className: string }[]>([]);
   const [newSubjectName, setNewSubjectName] = useState('');
   const [newClassName, setNewClassName] = useState('');
-
+  const [userEmail, setUserEmail] = useState('');
+  const [userName, setUserName] = useState("");
+  const [name, setName] = useState("");
+  const [message, setMessage] = useState('');
+  const router = useRouter();
   const handleAddSubject = () => {
     if (newSubjectName && newClassName) {
       setSubjects([...subjects, { subjectName: newSubjectName, className: newClassName }]);
@@ -18,7 +23,7 @@ const OnboardingPage = () => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     // Handle form submission logic here
     console.log({
@@ -27,13 +32,85 @@ const OnboardingPage = () => {
       schoolCategory,
       subjects,
     });
+    try{
+      const response = await fetch('/api/teacherProfile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, userName, userEmail, schoolType, schoolName, schoolCategory, subjects }),
+      });
+      if (response.ok) {
+        setName('');
+        setUserName('');
+        setUserEmail('');
+        setSchoolType('');
+        setSchoolName('');
+        setSchoolCategory('');
+        setSubjects([]);
+        console.log('Profile created successfully');
+        setMessage('Profile created successfully');
+        setTimeout(() => {
+          setMessage('');
+          router.push('/');
+        }, 3000);
+      } else {
+        setMessage('Failed to create profile : ' + response.statusText);
+        console.error('Failed to create profile:', response.statusText);
+      }
+    }catch(error){
+
+    }
+
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Onboarding</h2>
+        {
+          message && <p className="text-red-500 mb-4">{message}</p>
+        }
         <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+            <label className='block text-gray-700 text-sm font-bold mb-2' htmlFor="name">
+              Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Enter your name"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div className='mb-4'>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="userUserName">
+              User Name
+            </label>
+            <input
+              id="userUserName"
+              type="text"
+              placeholder="Enter your user name"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
+          <div className='mb-4'>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="userEmail">
+              User Email
+            </label>
+            <input
+              id="userEmail"
+              type="email"
+              placeholder="Enter your email"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+            />
+          </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="schoolType">
               School Type
@@ -62,6 +139,7 @@ const OnboardingPage = () => {
               onChange={(e) => setSchoolName(e.target.value)}
             />
           </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="schoolCategory">
               School Category
