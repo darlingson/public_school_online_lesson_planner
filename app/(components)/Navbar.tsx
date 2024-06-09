@@ -5,9 +5,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function Navbar() {
+export default function Navbar(props: any) {
   const [isOpen, setIsOpen] = useState(false);
-
+  const activeRouteClasses = "text-white hover:text-gray-200 font-bold underline"
+  const nonActiveRouteClasses = "text-white hover:text-gray-200"
+  console.log(props);
   return (
     <nav className="bg-orange-500 p-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -15,22 +17,22 @@ export default function Navbar() {
           <Link href="/">Online Lesson Planner</Link>
         </div>
         <div className="hidden md:flex space-x-4">
-          <Link href="/" className="text-white hover:text-gray-200">
+          <Link href="/" className={props.pathname === "/" ? activeRouteClasses : nonActiveRouteClasses}>
           Home
           </Link>
-          <Link href="/schemes" className="text-white hover:text-gray-200">
+          <Link href="/schemes" className={props.pathname === "/schemes" ? activeRouteClasses : nonActiveRouteClasses}>
             Schemes
           </Link>
-          <Link href="/lesson-plans" className="text-white hover:text-gray-200">
+          <Link href="/lesson-plans" className={props.pathname === "/lesson-plans" ? activeRouteClasses : nonActiveRouteClasses}>
             Lesson Plans
           </Link>
-          <Link href="/profile" className="text-white hover:text-gray-200">
+          <Link href="/profile" className={props.pathname === "/profile" ? activeRouteClasses : nonActiveRouteClasses}>
             Profile
           </Link>
-          <Link href="/help" className="text-white hover:text-gray-200">
+          <Link href="/help" className={props.pathname === "/help" ? activeRouteClasses : nonActiveRouteClasses}>
             Help
           </Link>
-          <Link href="/settings" className="text-white hover:text-gray-200">
+          <Link href="/settings" className={props.pathname === "/settings" ? activeRouteClasses : nonActiveRouteClasses}>
             Settings
           </Link>
         </div>

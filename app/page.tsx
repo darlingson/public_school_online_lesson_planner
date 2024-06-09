@@ -65,7 +65,7 @@ export default function Home() {
   };
 
   return (<>
-  <Navbar/>
+  <Navbar pathname="/"/>
     <div className="container mx-auto p-4 min-h-screen flex flex-col">
       <h1 className="text-4xl font-bold mb-8 text-center text-orange-500">Dashboard</h1>
 
