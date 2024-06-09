@@ -115,9 +115,12 @@ export const config = {
     '/lesson-plans/:path*',
     '/schemes/:path*',
     "/profile/:path*",
+    "/",
     '/api/lessonplans/:path*',
     "/api/lessonplans",
     "/api/schemes",
     "/api/teacherProfile/currentUser",
+    "/api/dashboard/lessonplans",
+    "/api/dashboard/schemes",
   ],
 };
