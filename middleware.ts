@@ -114,8 +114,10 @@ export const config = {
   matcher: [
     '/lesson-plans/:path*',
     '/schemes/:path*',
+    "/profile/:path*",
     '/api/lessonplans/:path*',
     "/api/lessonplans",
     "/api/schemes",
+    "/api/teacherProfile/currentUser",
   ],
 };

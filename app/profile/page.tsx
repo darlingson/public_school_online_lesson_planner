@@ -1,95 +1,89 @@
-'use client'
-import Head from "next/head";
-import Navbar from "../(components)/Navbar";
+'use client';
 
-export default function Profile() {
-    return <>
+import { useEffect, useState } from 'react';
+import Navbar from '../(components)/Navbar';
+
+
+interface Subject {
+  subjectName: string;
+  className: string;
+}
+
+interface TeacherProfile {
+  name: string;
+  userName: string;
+  userEmail: string;
+  schoolType: string;
+  schoolName: string;
+  schoolCategory: string;
+  subjects: Subject[];
+}
+
+const ProfilePage = () => {
+  const [profile, setProfile] = useState<TeacherProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch('/api/teacherProfile/currentUser',
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch profile');
+        }
+
+        const data = await response.json();
+        console.log(data);
+        setProfile(data);
+      } catch (err) {
+        setError('Error fetching profile');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (loading) return <div className="text-center">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
+
+  return (
+    <>
     <Navbar/>
-    <div className="container mx-auto p-4 pt-6 md:p-6 md:pt-12">
-      <Head>
-        <title>Teacher Profile - John Doe</title>
-      </Head>
-
-      <h1 className="text-3xl font-bold mb-4">Teacher Profile</h1>
-
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h2 className="text-xl font-bold mb-2">John Doe</h2>
-          <p className="text-lg">Mathematics Teacher</p>
-          <p className="text-lg">Lilongwe Secondary School</p>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between md:mt-4">
-          <div className="text-lg">
-            <span className="font-bold">Email:</span> <a href="mailto:johndoe@school.edu" className="hover:underline">johndoe@school.edu</a>
-          </div>
-          <div className="text-lg">
-            <span className="font-bold">Phone:</span> +265 999 123 456
-          </div>
-        </div>
-      </div>
-
-      <hr className="my-8" />
-
-      <div>
-        <h2 className="text-xl font-bold mb-4">About Me</h2>
-        <p className="text-lg">Hi, I &apos; m John Doe, a passionate mathematics teacher with 5 years of experience. I love inspiring young minds and making mathematics fun and accessible to all.</p>
-      </div>
-
-      <hr className="my-8" />
-
-      <div>
-        <h2 className="text-xl font-bold mb-4">Teaching Subjects</h2>
-        <ul className="list-none m-0 p-0">
-          <li className="text-lg">Mathematics (Grades 8-12)</li>
-          <li className="text-lg">Science (Grades 8-10)</li>
-        </ul>
-      </div>
-
-      <hr className="my-8" />
-
-      <div>
-        <h2 className="text-xl font-bold mb-4">Lesson Plans</h2>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Teacher Profile</h1>
+      {profile && (
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <p><strong>Name:</strong> {profile.name}</p>
+          <p><strong>Username:</strong> {profile.userName}</p>
+          <p><strong>Email:</strong> {profile.userEmail}</p>
+          <p><strong>School Type:</strong> {profile.schoolType}</p>
+          <p><strong>School Name:</strong> {profile.schoolName}</p>
+          <p><strong>School Category:</strong> {profile.schoolCategory}</p>
           <div>
-            <a href="#" className="text-lg hover:underline">View Lesson Plans</a>
-          </div>
-          <div>
-            <a href="#" className="text-lg hover:underline">Create New Lesson Plan</a>
+            <h2 className="text-xl font-semibold mt-4">Subjects</h2>
+            <ul className="list-disc pl-5">
+              {profile.subjects.map((subject, index) => (
+                <li key={index}>
+                  {subject.subjectName} - {subject.className}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      </div>
-
-      <hr className="my-8" />
-
-      <div>
-        <h2 className="text-xl font-bold mb-4">Schemes of Work</h2>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <div>
-            <a href="#" className="text-lg hover:underline">View Schemes of Work</a>
-          </div>
-          <div>
-            <a href="#" className="text-lg hover:underline">Create New Scheme of Work</a>
-          </div>
-        </div>
-      </div>
-
-      <hr className="my-8" />
-
-      <div>
-        <h2 className="text-xl font-bold mb-4">Teaching Philosophy</h2>
-        <p className="text-lg">I believe every student has the potential to excel in mathematics. My approach is student-centered, and I strive to create a supportive and inclusive learning environment.</p>
-      </div>
-
-      <hr className="my-8" />
-
-      <div>
-        <h2 className="text-xl font-bold mb-4">Professional Development</h2>
-        <ul className="list-none m-0 p-0">
-          <li className="text-lg">Attended the Teaching Mathematics with Technology workshop (2022)</li>
-          <li className="text-lg">Completed the Differentiated Instruction online course (2023)</li>
-        </ul>
-      </div>
+      )}
     </div>
     </>
-}
+  );
+};
+
+export default ProfilePage;
