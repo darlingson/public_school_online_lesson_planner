@@ -1,3 +1,5 @@
+import Navbar from "../(components)/Navbar";
+
 export default function Help() {
-    return <div>Help</div>;
+    return<><Navbar pathname="/help"/> <div>Help</div></>;
 }

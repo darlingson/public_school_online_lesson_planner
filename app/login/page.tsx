@@ -31,8 +31,7 @@ const Login = () => {
         return;
       }
 
-      console.log('Login successful, navigating to /lesson-plans');
-      router.push('/lesson-plans');
+      router.push('/');
     } catch (err) {
       console.error('Failed to log in:', err);
       setError('Something went wrong. Please try again.');

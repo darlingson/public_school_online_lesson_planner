@@ -51,7 +51,7 @@ export default function LessonPlans() {
 
     return (
         <>
-        <Navbar />
+        <Navbar pathname="/lesson-plans"/>
         <div className="container mx-auto p-4">
             <h1 className="text-xl font-bold mb-4">Lesson Plans</h1>
             <div className="mb-4">
