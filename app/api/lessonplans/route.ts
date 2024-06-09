@@ -52,8 +52,6 @@ export async function GET(req: NextRequest) {
 
     try {
         const lessonPlans = await LessonPlan.find({ email: userEmail });
-        console.log(`The email of the user is : ${userEmail}`)
-        console.log(`the lesson plans are : ${lessonPlans}`)
         return NextResponse.json(lessonPlans);
     } catch (error) {
         return NextResponse.json({ message: 'Error fetching lesson plans', error }, { status: 500 });
