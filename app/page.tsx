@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Navbar from "./(components)/Navbar";
 
 // Define interfaces for the data types
 interface Scheme {
@@ -63,7 +64,8 @@ export default function Home() {
     }
   };
 
-  return (
+  return (<>
+  <Navbar/>
     <div className="container mx-auto p-4 min-h-screen flex flex-col">
       <h1 className="text-4xl font-bold mb-8 text-center text-orange-500">Dashboard</h1>
 
@@ -111,5 +113,5 @@ export default function Home() {
         </div>
       </div>
     </div>
-  );
+    </>  );
 }
