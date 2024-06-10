@@ -1,4 +1,6 @@
 import Scheme from '@/app/(models)/Scheme';
+
+import mongoose, { Schema } from 'mongoose';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
@@ -20,12 +22,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json();
-    const updatedScheme = await Scheme.findOneAndUpdate({ _id: params.id }, body, { new: true });
+    console.log(body);
+    const updatedScheme = await innerScheme.findOneAndUpdate({ _id: body._id }, body, { new: true });
     if (!updatedScheme) {
       return NextResponse.json({ message: 'Scheme not found' }, { status: 404 });
     }
     return NextResponse.json(updatedScheme);
   } catch (error) {
+    console.error('Error updating scheme:', error);
     return NextResponse.json({ message: 'Failed to update scheme' }, { status: 500 });
   }
 }
@@ -41,3 +45,45 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     return NextResponse.json({ message: 'Failed to delete scheme' }, { status: 500 });
   }
 }
+
+
+interface IScheme extends Document {
+    _id: string;
+    title: string;
+    email: string;
+    subject: string;
+    class_name: string;
+    term: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    weekTopics: Array<{
+      week: number;
+      topic: string;
+      objectives: string;
+      resources: string;
+      assessment: string;
+    }>;
+  }
+  
+  const WeekTopicSchema: Schema = new Schema({
+    week: { type: Number, required: true },
+    topic: { type: String, required: true },
+    objectives: { type: String, required: true },
+    resources: { type: String, required: true },
+    assessment: { type: String, required: true },
+  });
+  
+  const SchemeSchema: Schema = new Schema({
+    _id: { type: String, required: true },
+    title: { type: String, required: true },
+    email: { type: String, required: true },
+    subject: { type: String, required: true },
+    class_name: { type: String, required: true },
+    term: { type: String, required: true },
+    description: { type: String, required: true },
+    startDate: { type: String, required: true },
+    endDate: { type: String, required: true },
+    weekTopics: [WeekTopicSchema],
+  });
+  const innerScheme = mongoose.models.Scheme || mongoose.model<IScheme>('Scheme', SchemeSchema);

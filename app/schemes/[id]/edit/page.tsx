@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Navbar from '../../../(components)/Navbar';
-
+import router from 'next/router';
 interface WeekTopic {
   week: number;
   topic: string;
@@ -25,13 +25,12 @@ interface Scheme {
   weekTopics: WeekTopic[];
 }
 
-export default function EditScheme() {
+export default function EditScheme({ params }: { params: { id: string } }) {
   const [scheme, setScheme] = useState<Scheme | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const schemeId = params.id;
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const schemeId = searchParams.get('id');
 
   useEffect(() => {
     if (schemeId) {
@@ -46,6 +45,7 @@ export default function EditScheme() {
         throw new Error("Failed to fetch scheme");
       }
       const data = await response.json();
+      console.log(data);
       setScheme(data);
     } catch (error) {
       console.error('Failed to fetch scheme:', error);
@@ -109,7 +109,7 @@ export default function EditScheme() {
       if (!response.ok) {
         throw new Error('Failed to update scheme');
       }
-      router.push('/schemes');  // Navigate back to the schemes page after editing
+      router.push('/schemes');
     } catch (error) {
       console.error('Failed to update scheme:', error);
     }
