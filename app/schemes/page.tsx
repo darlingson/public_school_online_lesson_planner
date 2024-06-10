@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Navbar from '../(components)/Navbar';
+import Link from 'next/link';
 
 interface WeekTopic {
   week: number;
@@ -12,7 +13,7 @@ interface WeekTopic {
 }
 
 interface Scheme {
-  id: string;
+  _id: string;
   title: string;
   email: string;
   subject: string;
@@ -27,7 +28,7 @@ interface Scheme {
 export default function Schemes() {
   const [schemes, setSchemes] = useState<Scheme[]>([]);
   const [newScheme, setNewScheme] = useState<Scheme>({
-    id: '',
+    _id: '',
     title: '',
     email: '',
     subject: '',
@@ -48,6 +49,7 @@ export default function Schemes() {
       const response = await fetch('/api/schemes');
       if (response.ok) {
         const data = await response.json();
+        console.log(data[0]);
         setSchemes(data);
       } else {
         console.error('Failed to fetch schemes:', response.statusText);
@@ -109,7 +111,7 @@ export default function Schemes() {
       if (response.ok) {
         fetchSchemes();
         setNewScheme({
-          id: '',
+          _id: '',
           title: '',
           email: '',
           subject: '',
@@ -138,9 +140,14 @@ export default function Schemes() {
           <h2 className="text-lg font-bold mb-2">Existing Schemes</h2>
           <ul>
             {schemes.map((scheme) => (
-              <li key={scheme.id} className="mb-4">
+              <li key={scheme._id} className="mb-4">
                 <h3 className="text-lg font-semibold">{scheme.title}</h3>
                 <p>{scheme.description}</p>
+                <p>
+                  <Link href={`/schemes/${scheme._id}/edit`}>
+                  Edit
+                  </Link>
+                </p>
               </li>
             ))}
           </ul>

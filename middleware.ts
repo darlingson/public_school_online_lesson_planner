@@ -119,6 +119,7 @@ export const config = {
     '/api/lessonplans/:path*',
     "/api/lessonplans",
     "/api/schemes",
+    "/api/schemes/:path*",
     "/api/teacherProfile/currentUser",
     "/api/dashboard/lessonplans",
     "/api/dashboard/schemes",
