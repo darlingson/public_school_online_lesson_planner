@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Navbar from '../(components)/Navbar';
+import Link from 'next/link';
 
 interface WeekTopic {
   week: number;
@@ -141,6 +142,11 @@ export default function Schemes() {
               <li key={scheme.id} className="mb-4">
                 <h3 className="text-lg font-semibold">{scheme.title}</h3>
                 <p>{scheme.description}</p>
+                <p>
+                  <Link href={`/schemes/${scheme.id}/edit`}>
+                  Edit
+                  </Link>
+                </p>
               </li>
             ))}
           </ul>
