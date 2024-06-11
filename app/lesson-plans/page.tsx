@@ -5,7 +5,7 @@ import Navbar from '../(components)/Navbar';
 
 // Define an interface for the lesson plan
 interface LessonPlan {
-    _id: string; // Assuming MongoDB ObjectId as string
+    _id: string;
     topic: string;
     class_name: string;
     subject: string;
