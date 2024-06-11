@@ -103,13 +103,16 @@ export default function EditLessonPlan({ params }: { params: { id: string } }) {
 
   return (
     <>
-    <Navbar pathname="/lesson-plans"/>
+      <Navbar pathname="/lesson-plans" />
       <div className="container mx-auto p-4">
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="group bg-orange-500 text-white py-2 px-4 rounded flex items-center hover:bg-orange-600 focus:outline-none focus:shadow-outline"
           onClick={() => router.back()}
         >
-          Back
+          <span className="transform transition-transform duration-300 ease-in-out group-hover:-translate-x-2">
+            &larr;
+          </span>
+          <span className="ml-2">Back</span>
         </button>
         <h1 className="text-2xl font-bold mb-4 text-orange-500">
           Edit Lesson Plan {params.id}
