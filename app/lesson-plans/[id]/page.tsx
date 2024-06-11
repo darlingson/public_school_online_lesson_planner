@@ -1,4 +1,5 @@
 'use client';
+import Navbar from "@/app/(components)/Navbar";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -36,7 +37,8 @@ export default function LessonPlan({ params }: { params: { id: string } }) {
     // return <div>Edit lesson plan {params.id}</div>;
     return (
         <>
-            <div>Edit lesson plan {params.id}</div>
+        <Navbar pathname="/lesson-plans"/>
+            <h1>Lesson Plan</h1>
             {
                 lessonPlan && (
                     <div>
